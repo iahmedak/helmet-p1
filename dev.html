@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>helmet dev</title>
+<style>
+  html,body{margin:0;height:100%;background:#0b0c0d;color:#f2efe8;font-family:Arial,sans-serif}
+  #stage{position:absolute;inset:0}
+  #stage canvas{display:block;width:100%;height:100%}
+  .hud{position:fixed;left:20px;top:20px;font:12px monospace;color:#8b939b;z-index:2}
+  .hud b{color:#d8f44b}
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+</head>
+<body>
+<div id="stage"></div>
+<div class="hud">SOUNDNAV · <b>3D TEST</b></div>
+<script type="module">
+  import { createHelmetViewer } from "./js/helmet.js";
+  const v = createHelmetViewer(document.getElementById("stage"), { hero: true, autoRotate: false });
+  window.viewer = v;
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "1") v.setPreset("three");
+    if (e.key === "2") v.setPreset("rear");
+    if (e.key === "3") v.setPreset("side");
+    if (e.key === "4") v.setExplode(1);
+    if (e.key === "5") v.setCutaway(1);
+  });
+</script>
+</body>
+</html>

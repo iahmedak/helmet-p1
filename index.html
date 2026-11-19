@@ -1,19 +1,681 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
-    <meta name="theme-color" content="#f5f5f7" />
-    <title>SONA — Sound Navigation Helmet</title>
-    <meta name="description" content="SONA is a sound navigation helmet: a phone sends a byte over Bluetooth, a single piezo buzzer answers with a navigation cadence. A first-year engineering project on an ESP32-C3." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOUNDNAV — Smart Audio Navigation Helmet</title>
+<meta name="description" content="SOUNDNAV is a student-built audio navigation helmet prototype: five short cues, eyes-up riding, and a bench build documented honestly.">
+<meta name="theme-color" content="#0b0d0e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23d8f44b'/%3E%3Cg fill='%230b0d0e'%3E%3Crect x='7' y='13' width='3' height='6'/%3E%3Crect x='12.5' y='9' width='3' height='14'/%3E%3Crect x='18' y='5' width='3' height='22'/%3E%3Crect x='23.5' y='11' width='3' height='10'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add("js");</script>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="SOUNDNAV home">
+      <span>SOUNDNAV</span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a href="#glance">The glance</a>
+      <a href="#iteration">Iteration</a>
+      <a href="#system">System</a>
+      <a href="#anatomy">Anatomy</a>
+      <a href="#cues">Cues</a>
+      <a href="#status">Build</a>
+    </nav>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" id="nav-toggle">
+      <span aria-hidden="true"></span> Menu
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="mono hero-eyebrow">VTU 1BIDTL158 · Innovation &amp; Design Thinking</p>
+        <h1 id="hero-title">Eyes on the road.<br><em>Directions in your ear.</em></h1>
+        <p class="hero-sub">
+          SOUNDNAV is a helmet that turns a route into <strong>five short audio cues</strong>, so the phone can stay in your pocket and the road can stay in view.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn btn--hi" href="#cues">Hear the cues <span aria-hidden="true">→</span></a>
+          <a class="btn" href="#status">Read the build status</a>
+        </div>
+        <div class="hero-meta" aria-label="Project facts">
+          <div><b>Bench prototype</b><span>ESP32-C3 + piezo</span></div>
+          <div><b>Five cues</b><span>Tone + voice</span></div>
+          <div><b>Zero road tests</b><span>No safety claim</span></div>
+        </div>
+      </div>
+
+      <div class="hero-stage" aria-label="Interactive 3D concept model of the SOUNDNAV helmet">
+        <div id="hero-viewer">
+          <noscript><p class="mono" style="padding:24px;color:#8d959b">The 3D viewer needs JavaScript. The helmet is a digital concept model, not a physical build.</p></noscript>
+        </div>
+        <span class="stage-corner stage-corner--tl" aria-hidden="true"></span>
+        <span class="stage-corner stage-corner--tr" aria-hidden="true"></span>
+        <span class="stage-corner stage-corner--bl" aria-hidden="true"></span>
+        <span class="stage-corner stage-corner--br" aria-hidden="true"></span>
+        <p class="mono stage-tag stage-tag--tl"><b>FIG. 01</b> / HELMET CONCEPT</p>
+        <p class="mono stage-tag stage-tag--tr">REV 01<br>DIGITAL ONLY</p>
+        <p class="mono stage-tag stage-tag--bl">DRAG TO ORBIT</p>
+        <p class="mono stage-tag stage-tag--br">SOUNDNAV / 2026</p>
+      </div>
+    </div>
+
+    <div class="ticker" aria-label="Current project status">
+      <div class="ticker-track">
+        <div class="ticker-group">
+          <span class="ticker-item"><b>Bench build</b> ESP32-C3 + piezo — working</span>
+          <span class="ticker-item"><b>Spoken guidance</b> browser simulation</span>
+          <span class="ticker-item"><b>MAX9814 + DFPlayer</b> not integrated</span>
+          <span class="ticker-item"><b>Road test</b> not run</span>
+          <span class="ticker-item"><b>HUD</b> abandoned 12 Nov 2026</span>
+        </div>
+        <div class="ticker-group" aria-hidden="true">
+          <span class="ticker-item"><b>Bench build</b> ESP32-C3 + piezo — working</span>
+          <span class="ticker-item"><b>Spoken guidance</b> browser simulation</span>
+          <span class="ticker-item"><b>MAX9814 + DFPlayer</b> not integrated</span>
+          <span class="ticker-item"><b>Road test</b> not run</span>
+          <span class="ticker-item"><b>HUD</b> abandoned 12 Nov 2026</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GLANCE ================= -->
+  <section class="section bone-section" id="glance" aria-labelledby="glance-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>01</b> / The glance</p>
+        <div>
+          <h2 class="section-title" id="glance-title">The problem was never where the screen sat.</h2>
+        </div>
+      </div>
+
+      <div class="glance-grid">
+        <div>
+          <p class="glance-quote">A navigation screen asks for your eyes. <em>That is the one thing a rider cannot spare.</em></p>
+          <div class="field-note">
+            <span class="mono" style="white-space:nowrap;color:#556c00">Field note</span>
+            <p><b>This project began with a repeated sight:</b> riders balancing a phone on the handlebar, looking down for the next turn, then back up at traffic. The observation is the starting point — not a safety study.</p>
+          </div>
+        </div>
+        <div class="glance-body">
+          <p>The first concept moved the screen into the helmet. A small display, a combiner optic, directions floating in the rider’s field of view. It sounded like progress. It was still a screen.</p>
+          <p>Every version of that idea carried the same cost: <strong>a glance away from the road</strong>. The display also demanded optics, brightness and eye relief that the team could not build well with the tools available. In November, the project changed direction.</p>
+          <p>The new question was narrower and more useful: <strong>can a route be understood by sound alone, without taking attention away from traffic?</strong> SOUNDNAV is the attempt to answer that with a bench prototype — and to be clear about what has not been proven.</p>
+        </div>
+      </div>
+
+      <div class="observations" style="margin-top:46px">
+        <div class="observation">
+          <span class="n">01</span>
+          <div>
+            <b>Look down to confirm</b>
+            <p>The phone is the map, the compass and the next instruction. Each confirmation pulls the rider’s eyes off the road.</p>
+            <span class="src">Observed behaviour · document in Week 4–5</span>
+          </div>
+        </div>
+        <div class="observation">
+          <span class="n">02</span>
+          <div>
+            <b>Miss the turn, add a U-turn</b>
+            <p>A missed cue becomes a stop, a re-route and an unscheduled manoeuvre. Audio has to be early and unambiguous.</p>
+            <span class="src">Conversation with peers · to verify</span>
+          </div>
+        </div>
+        <div class="observation">
+          <span class="n">03</span>
+          <div>
+            <b>One ear plugged, less traffic heard</b>
+            <p>Riders already use one earbud for directions. That trades navigation attention for awareness of horns, speech and engines.</p>
+            <span class="src">Design risk · needs testing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ITERATION ================= -->
+  <section class="section" id="iteration" aria-labelledby="iteration-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>02</b> / The pivot</p>
+        <div>
+          <h2 class="section-title" id="iteration-title">We built the wrong thing first. Then we changed it.</h2>
+          <p class="section-intro">Early October 2026: a helmet HUD. 12 November 2026: an audio helmet. The pivot was forced by optics, and confirmed by the attention problem. <strong>Dates are the working record; confirm exact days in the field record.</strong></p>
+        </div>
+      </div>
+
+      <div class="pivot-grid">
+        <article class="iteration iteration--dead reveal">
+          <div class="iteration-head">
+            <div>
+              <p class="mono iteration-kicker">Concept 01 · early Oct 2026</p>
+              <h3>Helmet HUD</h3>
+            </div>
+            <span class="tag tag--dead">Abandoned</span>
+          </div>
+
+          <div class="iteration-figure">
+            <svg viewBox="0 0 640 360" role="img" aria-label="Side-view concept sketch of a helmet display: projector, combiner and eye, with a failed optical path marked in red">
+              <g fill="none" stroke="#3c4245" stroke-width="1.5">
+                <path d="M100 246C88 168 136 92 224 64C330 30 434 82 458 178L464 246C468 292 432 318 392 322L176 322C132 318 108 292 100 246Z"/>
+                <path d="M198 150C252 124 332 120 398 140L402 214C342 230 264 232 200 214Z" stroke="#596165"/>
+                <path d="M206 238L400 238"/>
+                <path d="M222 292L388 292" stroke="#2f3436"/>
+              </g>
+              <rect x="236" y="88" width="38" height="28" fill="none" stroke="#8d959b"/>
+              <text x="222" y="80" fill="#8d959b" font-family="IBM Plex Mono, monospace" font-size="8">PROJECTOR</text>
+              <path d="M318 116L318 240" stroke="#d8f44b" stroke-width="5" opacity=".8"/>
+              <text x="330" y="112" fill="#d8f44b" font-family="IBM Plex Mono, monospace" font-size="8">COMBINER</text>
+              <circle cx="372" cy="180" r="10" fill="none" stroke="#8d959b"/>
+              <circle cx="372" cy="180" r="3" fill="#8d959b"/>
+              <text x="392" y="184" fill="#8d959b" font-family="IBM Plex Mono, monospace" font-size="8">EYE</text>
+              <path d="M254 102L318 158L360 174" stroke="#d8f44b" stroke-dasharray="4 4"/>
+              <path d="M254 102L402 84" stroke="#f26a4b" stroke-dasharray="3 5"/>
+              <path d="M446 58L470 82M470 58L446 82" stroke="#f26a4b" stroke-width="1.5"/>
+              <text x="474" y="76" fill="#f26a4b" font-family="IBM Plex Mono, monospace" font-size="8">FAILED PATH</text>
+              <text x="24" y="34" fill="#5e666b" font-family="IBM Plex Mono, monospace" font-size="8">CONCEPT SKETCH / NOT BUILT</text>
+            </svg>
+            <span class="mono-xs fig-label">OPTICS STUDY / NO PHYSICAL HUD</span>
+          </div>
+
+          <ul class="iteration-list">
+            <li><span><b>Combiner alignment:</b> the image drifted with every helmet fit and eye position.</span></li>
+            <li><span><b>Daylight brightness:</b> a small projector could not compete with outdoor light.</span></li>
+            <li><span><b>Eye relief:</b> the optic wanted a fixed viewing distance; a helmet does not offer one.</span></li>
+            <li><span><b>Attention:</b> even when it worked, it was another screen to read.</span></li>
+          </ul>
+          <div class="verdict">Verdict <strong>STOP — the display was the wrong interface.</strong></div>
+        </article>
+
+        <article class="iteration reveal">
+          <div class="iteration-head">
+            <div>
+              <p class="mono iteration-kicker">Concept 02 · 12 Nov 2026</p>
+              <h3>Audio helmet</h3>
+            </div>
+            <span class="tag tag--built">Bench build</span>
+          </div>
+
+          <div class="iteration-figure" style="background:#0b0f10">
+            <svg viewBox="0 0 640 360" role="img" aria-label="Concept sketch of the audio helmet: route on a phone, a rear control bay, ear pods and a five-cue language">
+              <g fill="none" stroke="#3c4245" stroke-width="1.5">
+                <path d="M176 86L176 284M176 86L420 86C488 86 520 140 520 200L520 244C520 288 486 310 444 310L176 310"/>
+                <circle cx="348" cy="196" r="66"/>
+                <path d="M282 196L414 196" stroke="#596165"/>
+                <path d="M300 168L360 168" stroke="#596165"/>
+              </g>
+              <rect x="426" y="120" width="94" height="62" fill="none" stroke="#d8f44b"/>
+              <text x="438" y="146" fill="#d8f44b" font-family="IBM Plex Mono, monospace" font-size="8">REAR BAY</text>
+              <text x="438" y="160" fill="#8d959b" font-family="IBM Plex Mono, monospace" font-size="7">ESP32 / DFPLAYER</text>
+              <circle cx="250" cy="196" r="26" fill="none" stroke="#d8f44b"/>
+              <circle cx="250" cy="196" r="19" stroke="#596165"/>
+              <path d="M276 196L312 196" stroke="#d8f44b" stroke-dasharray="3 4"/>
+              <text x="96" y="328" fill="#5e666b" font-family="IBM Plex Mono, monospace" font-size="8">CONCEPT SKETCH / DIGITAL MODEL ONLY</text>
+              <g fill="#8d959b" font-family="IBM Plex Mono, monospace" font-size="7">
+                <text x="30" y="60">01 / PHONE ROUTE</text>
+                <text x="30" y="82">02 / CUE COMMAND</text>
+                <text x="30" y="104">03 / SPOKEN OUTPUT</text>
+              </g>
+              <g stroke="#d8f44b" stroke-width="1">
+                <path d="M122 64H34"/><path d="M122 86H34"/><path d="M122 108H34"/>
+              </g>
+            </svg>
+            <span class="mono-xs fig-label">AUDIO SYSTEM / REV 02</span>
+          </div>
+
+          <ul class="iteration-list">
+            <li><span><b>No screen:</b> the route is carried by short, ordered cues instead of a map to read.</span></li>
+            <li><span><b>Buildable:</b> ESP32, DFPlayer, MAX9814 and speakers are available; the optics were not.</span></li>
+            <li><span><b>Modular:</b> the electronics sit in a rear bay, so the helmet shell can stay simple.</span></li>
+            <li><span><b>Still a risk:</b> audio must stay intelligible in wind and traffic without masking either.</span></li>
+          </ul>
+          <div class="verdict">Verdict <strong>PROCEED — build the bench, test the cue language.</strong></div>
+        </article>
+      </div>
+
+      <div class="decision-table" role="table" aria-label="Display versus audio decision record">
+        <div class="decision-row decision-row--head" role="row">
+          <span role="columnheader">Dimension</span><span role="columnheader">Display HUD</span><span role="columnheader">Audio helmet</span>
+        </div>
+        <div class="decision-row" role="row"><b role="cell">Attention</b><span class="no" role="cell">Requires a glance</span><span class="yes" role="cell">Eyes stay up</span></div>
+        <div class="decision-row" role="row"><b role="cell">Optics</b><span class="no" role="cell">Combiner, brightness, eye relief</span><span class="yes" role="cell">No optic</span></div>
+        <div class="decision-row" role="row"><b role="cell">Buildability</b><span class="no" role="cell">Beyond available tools</span><span class="yes" role="cell">Modules on hand</span></div>
+        <div class="decision-row" role="row"><b role="cell">Failure mode</b><span class="no" role="cell">Unreadable / distracting</span><span class="yes" role="cell">Unintelligible / masking</span></div>
+        <div class="decision-row" role="row"><b role="cell">Evidence so far</b><span class="no" role="cell">Concept sketch only</span><span class="yes" role="cell">Tone bench + browser simulation</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SYSTEM ================= -->
+  <section class="section" id="system" aria-labelledby="system-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>03</b> / System</p>
+        <div>
+          <h2 class="section-title" id="system-title">A loop, not a chain.</h2>
+          <p class="section-intro">Sound goes out; a command comes back. The intended build uses the microphone, the ESP32 and the phone in a loop. <strong>The bench build only closes the buzzer part of that loop.</strong></p>
+        </div>
+      </div>
+
+      <div class="system-tabs" role="tablist" aria-label="Signal path">
+        <button class="system-tab" type="button" role="tab" id="tab-guidance" aria-selected="true" aria-controls="system-detail" data-flow="guidance">Ride guidance</button>
+        <button class="system-tab" type="button" role="tab" id="tab-voice" aria-selected="false" aria-controls="system-detail" data-flow="voice">Voice command</button>
+      </div>
+
+      <div class="pipeline" id="pipeline" role="group" aria-label="Audio system signal path">
+        <button class="node is-idle" type="button" data-node="mic" aria-pressed="false">
+          <span class="node-idx">01 / IN</span>
+          <span class="node-name">Microphone</span>
+          <span class="node-part">MAX9814 + electret</span>
+          <span class="node-status is-none">Not integrated</span>
+        </button>
+        <span class="node-link" aria-hidden="true"><span>→</span></span>
+        <button class="node" type="button" data-node="esp32" aria-pressed="false">
+          <span class="node-idx">02 / BRIDGE</span>
+          <span class="node-name">ESP32-C3</span>
+          <span class="node-part">Command + cue firmware</span>
+          <span class="node-status is-built">Bench built</span>
+        </button>
+        <span class="node-link" aria-hidden="true"><span>→</span></span>
+        <button class="node" type="button" data-node="phone" aria-pressed="true">
+          <span class="node-idx">03 / ROUTE</span>
+          <span class="node-name">Phone</span>
+          <span class="node-part">Map, speech, BLE link</span>
+          <span class="node-status is-sim">Simulated</span>
+        </button>
+        <span class="node-link" aria-hidden="true"><span>→</span></span>
+        <button class="node" type="button" data-node="dfplayer" aria-pressed="false">
+          <span class="node-idx">04 / OUT</span>
+          <span class="node-name">DFPlayer</span>
+          <span class="node-part">MP3 voice module</span>
+          <span class="node-status is-none">Not integrated</span>
+        </button>
+        <span class="node-link" aria-hidden="true"><span>→</span></span>
+        <button class="node" type="button" data-node="speakers" aria-pressed="false">
+          <span class="node-idx">05 / SOUND</span>
+          <span class="node-name">Ear pods</span>
+          <span class="node-part">2× 3 W speakers</span>
+          <span class="node-status is-none">Not integrated</span>
+        </button>
+      </div>
+
+      <div class="system-detail" id="system-detail" role="region" aria-live="polite">
+        <div>
+          <p class="mono steel" id="detail-kicker">03 / ROUTE</p>
+          <h3 id="detail-title">Phone computes the next cue</h3>
+          <p id="detail-copy">The browser holds the route and decides when a cue is due. In the bench demo, a cue command is sent to the ESP32-C3. In the intended build, the phone also handles speech recognition and sends short phrases to the DFPlayer.</p>
+        </div>
+        <div class="detail-side">
+          <dl>
+            <dt>Status</dt>
+            <dd class="hi" id="detail-status">Simulated in the browser</dd>
+            <dt>What exists</dt>
+            <dd id="detail-exists">A demo route, cue sequence and browser voice preview on this page.</dd>
+            <dt>What is missing</dt>
+            <dd id="detail-missing">Live GPS, a mounted phone, and any on-road trial.</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="system-strips">
+        <div class="strip">
+          <div class="strip-label"><span class="mono">Bench v0 / built</span><span class="tag tag--built">Working</span></div>
+          <b>Browser</b><span class="arrow">→</span><b>ESP32-C3</b><span class="arrow">→</span><b>Passive piezo</b>
+          <p class="mono" style="width:100%;margin-top:4px;color:var(--steel-2);font-size:8px">Cue command triggers a tone pattern. Powered from a protected 1S LiPo through a 5 V boost.</p>
+        </div>
+        <div class="strip strip--dash">
+          <div class="strip-label"><span class="mono">Intended v1 / partly simulated</span><span class="tag tag--none">Not wired</span></div>
+          <b>MAX9814</b><span class="arrow">→</span><b>ESP32</b><span class="arrow">→</span><b>Phone</b><span class="arrow">→</span><b>DFPlayer</b><span class="arrow">→</span><b>Speakers</b>
+          <p class="mono" style="width:100%;margin-top:4px;color:var(--steel-2);font-size:8px">Guidance takes the short path: phone → ESP32 → DFPlayer. The mic path is for voice commands.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ANATOMY ================= -->
+  <section class="section" id="anatomy" aria-labelledby="anatomy-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>04</b> / Anatomy</p>
+        <div>
+          <h2 class="section-title" id="anatomy-title">Six parts. One of them is still a render.</h2>
+          <p class="section-intro">The shell, visor, liner and rear bay exist as a parametric <strong>Three.js</strong> model. The electronics shown inside are the intended layout; only the bench subset has been powered. Select a part to inspect it.</p>
+        </div>
+      </div>
+
+      <div class="anatomy-grid">
+        <div class="anatomy-stage">
+          <div id="anatomy-viewer" aria-label="Interactive exploded 3D model of the SOUNDNAV helmet. Use the part list for a text description."></div>
+          <p class="mono stage-hint">DRAG TO ORBIT / SCROLL TO ZOOM</p>
+        </div>
+        <div class="anatomy-panel">
+          <div class="control-row" aria-label="Model controls">
+            <button class="control" type="button" data-view="three" aria-pressed="true">3/4</button>
+            <button class="control" type="button" data-view="front">Front</button>
+            <button class="control" type="button" data-view="side">Side</button>
+            <button class="control" type="button" data-view="rear">Rear</button>
+            <button class="control" type="button" id="btn-explode" aria-pressed="false">Explode</button>
+            <button class="control" type="button" id="btn-cutaway" aria-pressed="false">Cutaway</button>
+            <button class="control" type="button" id="btn-ghost" aria-pressed="false">X-ray</button>
+          </div>
+
+          <ul class="parts" aria-label="Helmet parts">
+            <li><button class="part-btn" type="button" data-part="shell" aria-pressed="false"><span>01</span><b>Shell + chin bar</b><em>Digital</em></button></li>
+            <li><button class="part-btn" type="button" data-part="visor" aria-pressed="false"><span>02</span><b>Visor</b><em>Digital</em></button></li>
+            <li><button class="part-btn" type="button" data-part="bay" aria-pressed="true"><span>03</span><b>Rear control bay</b><em>Mixed</em></button></li>
+            <li><button class="part-btn" type="button" data-part="audio" aria-pressed="false"><span>04</span><b>Audio pods</b><em>Parts only</em></button></li>
+            <li><button class="part-btn" type="button" data-part="mic" aria-pressed="false"><span>05</span><b>Microphone</b><em>Parts only</em></button></li>
+            <li><button class="part-btn" type="button" data-part="pads" aria-pressed="false"><span>06</span><b>Liner + pads</b><em>Digital</em></button></li>
+          </ul>
+
+          <div class="part-detail" aria-live="polite">
+            <h3 id="part-title">Rear control bay</h3>
+            <p id="part-copy">The rear pod holds the ESP32-C3, DFPlayer Mini, TP4056 charger, MT3608 boost, MAX9814 and a protected 1S LiPo. The bench build uses the ESP32, charger, boost and piezo only; the rest are placed in the model, not wired.</p>
+            <div class="part-meta">
+              <span class="tag tag--sim" id="part-status">Partly built</span>
+              <span class="tag tag--none" id="part-extra">No enclosure print</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CUES ================= -->
+  <section class="section" id="cues" aria-labelledby="cues-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>05</b> / Cue language</p>
+        <div>
+          <h2 class="section-title" id="cues-title">Five cues. Short enough to hear once.</h2>
+          <p class="section-intro">The bench firmware uses tone patterns. The intended build replaces them with short spoken phrases. <strong>Both are previewed here; only the tones have run on hardware.</strong></p>
+        </div>
+      </div>
+
+      <div class="cues-grid">
+        <div class="phone-wrap">
+          <div class="phone" aria-label="Simulated phone navigation screen">
+            <div class="phone-screen">
+              <div class="phone-top"><span>08:42</span><span>SOUNDNAV · BLE</span></div>
+              <div class="phone-head"><b>RIDE 014</b><span>SIMULATION</span></div>
+              <div class="phone-map">
+                <svg viewBox="0 0 300 420" role="img" aria-label="Stylised map with a highlighted route from start to destination">
+                  <rect width="300" height="420" fill="#0d1112"/>
+                  <g fill="#141a1b" stroke="#1d2426" stroke-width="1">
+                    <rect x="10" y="20" width="82" height="62"/><rect x="112" y="20" width="70" height="62"/><rect x="202" y="20" width="88" height="62"/>
+                    <rect x="10" y="108" width="62" height="80"/><rect x="92" y="108" width="90" height="80"/><rect x="202" y="108" width="88" height="80"/>
+                    <rect x="10" y="212" width="62" height="68"/><rect x="92" y="212" width="90" height="68"/><rect x="202" y="212" width="88" height="68"/>
+                    <rect x="10" y="304" width="82" height="96"/><rect x="112" y="304" width="70" height="96"/><rect x="202" y="304" width="88" height="96"/>
+                  </g>
+                  <g stroke="#242b2d" stroke-width="18" stroke-linecap="square">
+                    <path d="M96 0V420"/><path d="M0 196H300"/><path d="M0 292H300"/><path d="M196 0V420"/><path d="M0 96H300"/>
+                  </g>
+                  <path d="M48 370V310Q48 292 66 292H150Q168 292 168 274V190Q168 172 186 172H230Q248 172 248 154V80" fill="none" stroke="#050708" stroke-width="10" stroke-linecap="round"/>
+                  <path id="route-path" d="M48 370V310Q48 292 66 292H150Q168 292 168 274V190Q168 172 186 172H230Q248 172 248 154V80" fill="none" stroke="#d8f44b" stroke-width="4" stroke-linecap="round"/>
+                  <g>
+                    <circle cx="48" cy="370" r="13" class="map-dot-ring"/>
+                    <circle cx="48" cy="370" r="5" fill="#e9e4d7"/>
+                    <circle id="route-dot" cx="48" cy="370" r="6" class="map-dot"/>
+                    <circle cx="248" cy="80" r="10" fill="none" stroke="#e9e4d7" stroke-width="1.5"/>
+                    <path d="M244 80H252M248 76V84" stroke="#e9e4d7" stroke-width="1.5"/>
+                  </g>
+                  <g fill="#5e666b" font-family="IBM Plex Mono, monospace" font-size="7" letter-spacing="1">
+                    <text x="16" y="386">START</text>
+                    <text x="218" y="62">END</text>
+                    <text x="12" y="32">BLK A</text>
+                    <text x="210" y="330">BLK D</text>
+                  </g>
+                  <g fill="none" stroke="#3a4143" stroke-width="1"><path d="M280 44V24H300"/><text x="266" y="52" fill="#8d959b" font-family="IBM Plex Mono, monospace" font-size="7">N</text></g>
+                </svg>
+                <div class="phone-cue" aria-live="polite">
+                  <div class="pc-top"><span id="phone-code">C</span><span id="phone-distance">0 m</span></div>
+                  <b id="phone-text">Connected</b>
+                  <small id="phone-sub">Audio channel ready · phone in pocket</small>
+                </div>
+              </div>
+              <div class="phone-foot"><span>SOUNDNAV DEMO</span><span>NO LIVE GPS</span></div>
+            </div>
+          </div>
+          <p class="mono-xs phone-note">SIMULATED RIDE · NO ROAD TEST · CUES ARE SYNTHESIZED LOCALLY</p>
+        </div>
+
+        <div>
+          <div class="cue-controls">
+            <span class="mono steel" style="margin-right:4px">Preview</span>
+            <div class="seg" role="group" aria-label="Cue preview mode">
+              <button type="button" id="mode-tone" aria-pressed="true">Bench tone</button>
+              <button type="button" id="mode-voice" aria-pressed="false">Intended voice</button>
+            </div>
+            <button class="btn btn--sm" type="button" id="play-route">Play route <span aria-hidden="true">▶</span></button>
+            <button class="btn btn--sm btn--ghost" type="button" id="stop-route" hidden>Stop</button>
+          </div>
+
+          <div class="cue-list" id="cue-list">
+            <button class="cue" type="button" data-cue="L">
+              <span class="cue-code">L</span>
+              <span class="cue-name">Turn left<small>One short pulse</small></span>
+              <span class="cue-bars-wrap"><span class="cue-bars"><i class="on" style="width:44px"></i></span><span class="cue-pattern">2400 HZ · 80 MS</span></span>
+              <span class="cue-play" aria-hidden="true"><svg viewBox="0 0 10 12" fill="currentColor"><path d="M0 0l10 6-10 6z"/></svg></span>
+            </button>
+            <button class="cue" type="button" data-cue="R">
+              <span class="cue-code">R</span>
+              <span class="cue-name">Turn right<small>Two pulses</small></span>
+              <span class="cue-bars-wrap"><span class="cue-bars"><i class="on" style="width:34px"></i><i style="width:12px;background:transparent"></i><i class="on" style="width:34px"></i></span><span class="cue-pattern">2400 HZ · 80 MS ×2</span></span>
+              <span class="cue-play" aria-hidden="true"><svg viewBox="0 0 10 12" fill="currentColor"><path d="M0 0l10 6-10 6z"/></svg></span>
+            </button>
+            <button class="cue" type="button" data-cue="U">
+              <span class="cue-code">U</span>
+              <span class="cue-name">U-turn ahead<small>High-urgency triple</small></span>
+              <span class="cue-bars-wrap"><span class="cue-bars"><i class="on" style="width:24px"></i><i style="width:8px"></i><i class="on" style="width:24px"></i><i style="width:8px"></i><i class="on" style="width:24px"></i></span><span class="cue-pattern">3000 HZ · 60 MS ×3</span></span>
+              <span class="cue-play" aria-hidden="true"><svg viewBox="0 0 10 12" fill="currentColor"><path d="M0 0l10 6-10 6z"/></svg></span>
+            </button>
+            <button class="cue" type="button" data-cue="D">
+              <span class="cue-code">D</span>
+              <span class="cue-name">Destination<small>One sustained low tone</small></span>
+              <span class="cue-bars-wrap"><span class="cue-bars"><i class="on" style="width:120px"></i></span><span class="cue-pattern">1800 HZ · 500 MS</span></span>
+              <span class="cue-play" aria-hidden="true"><svg viewBox="0 0 10 12" fill="currentColor"><path d="M0 0l10 6-10 6z"/></svg></span>
+            </button>
+            <button class="cue" type="button" data-cue="C">
+              <span class="cue-code">C</span>
+              <span class="cue-name">Connected<small>Two ascending chirps</small></span>
+              <span class="cue-bars-wrap"><span class="cue-bars"><i class="on" style="width:46px"></i><i style="width:14px"></i><i class="on" style="width:66px"></i></span><span class="cue-pattern">2000 → 2600 HZ</span></span>
+              <span class="cue-play" aria-hidden="true"><svg viewBox="0 0 10 12" fill="currentColor"><path d="M0 0l10 6-10 6z"/></svg></span>
+            </button>
+          </div>
+
+          <p class="cue-note"><b>Why these five:</b> a left and a right must be distinguishable on the first hearing; a U-turn needs urgency; arrival needs closure; connection confirms the link before the ride. The pattern lengths come from the bench firmware. The voice version is a browser preview, not the DFPlayer output.</p>
+          <p class="speech-warning" id="speech-warning">This browser has no speech synthesizer. Tone preview still works.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATUS ================= -->
+  <section class="section" id="status" aria-labelledby="status-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>06</b> / Build status</p>
+        <div>
+          <h2 class="section-title" id="status-title">What works. What is simulated. What is not there.</h2>
+          <p class="section-intro">A prototype is only useful if its boundary is visible. <strong>Nothing in this table is a safety claim.</strong></p>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="status-table">
+          <thead>
+            <tr><th scope="col">Subsystem</th><th scope="col">Status</th><th scope="col">What exists</th><th scope="col">What is missing</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Helmet form</td><td><span class="tag tag--built">Digital</span></td><td>Parametric Three.js model with shell, visor, pads, rear bay and audio pods.</td><td>No physical print, no fit test, no shell fabrication.</td></tr>
+            <tr><td>ESP32 cue firmware</td><td><span class="tag tag--built">Built</span></td><td>L / R / U / D / C tone patterns on a passive piezo, powered from a protected 1S LiPo.</td><td>Not installed in a helmet; no enclosure.</td></tr>
+            <tr><td>Browser → ESP32 link</td><td><span class="tag tag--built">Built</span></td><td>Cue commands from the web app trigger the bench buzzer.</td><td>Bench-only link; transport and range not documented for a ride.</td></tr>
+            <tr><td>Map + route</td><td><span class="tag tag--sim">Simulated</span></td><td>A demo route on this page with five timed cues.</td><td>No live GPS, no phone mount, no real trip.</td></tr>
+            <tr><td>Spoken guidance</td><td><span class="tag tag--sim">Simulated</span></td><td>Browser speech preview of the intended phrases.</td><td>No DFPlayer wiring, no MP3 set, no in-helmet playback.</td></tr>
+            <tr><td>Voice commands</td><td><span class="tag tag--sim">Simulated</span></td><td>Scripted voice-command demo path.</td><td>MAX9814 not connected; no speech recognition on device.</td></tr>
+            <tr><td>Mic + audio output</td><td><span class="tag tag--none">Not integrated</span></td><td>MAX9814, DFPlayer Mini and 3 W speakers are on hand.</td><td>No capture, no amplifier chain, no ear-pod wiring.</td></tr>
+            <tr><td>On-road test</td><td><span class="tag tag--none">Not run</span></td><td>—</td><td>No rider trial, no noise measurement, no safety validation.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="claim">
+        <p class="mono"><b>Claim boundary</b></p>
+        <p><strong>This is a student bench prototype.</strong> It does not prevent accidents, replace attention, or certify roadworthiness. It has not been tested in traffic or at riding speed. The site documents the concept, the bench build and the intended system so the next iteration can be judged honestly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FIELD NOTES ================= -->
+  <section class="section bone-section" id="field" aria-labelledby="field-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>07</b> / Field notes</p>
+        <div>
+          <h2 class="section-title" id="field-title">The most useful feedback was the uncomfortable kind.</h2>
+          <p class="section-intro">A small group of classmates and peers saw the concept in November 2026. They did not validate safety. They did identify a usability gap.</p>
+        </div>
+      </div>
+
+      <div class="quotes">
+        <article class="quote reveal">
+          <q>Useful idea, but audio alone could be confusing. I would want to check the route somewhere.</q>
+          <footer>Classmate · informal peer review · Nov 2026</footer>
+        </article>
+        <article class="quote reveal">
+          <q>Add a visual route on the phone. Not in the helmet — just something I can glance at when I stop.</q>
+          <footer>Peer · informal peer review · Nov 2026</footer>
+        </article>
+        <article class="quote quote--open reveal">
+          <span class="mono-xs" style="color:#7c5a00">Open question</span>
+          <q>How short is short enough?</q>
+          <p style="font-size:13px;color:#55534b;margin-top:10px">We set an internal target of under two seconds per cue. It has not been tested in wind or traffic.</p>
+          <footer>Team assumption · not peer feedback</footer>
+        </article>
+      </div>
+      <p class="mono-xs" style="margin-top:14px;color:#6d6a60">PARAPHRASED FROM THE TEAM'S INFORMAL NOTES · NAMES, COUNT AND EXACT WORDING BELONG IN THE FIELD RECORD</p>
+
+      <div class="response">
+        <p class="mono" style="color:#556c00">Response</p>
+        <div>
+          <p><strong>Kept audio primary; added a visual backup on the phone.</strong> The helmet still has no display. The phone screen is available before the ride and at a stop — not as a second thing to read while moving.</p>
+          <p><strong>Limited the language to five cues and short phrases.</strong> The bench patterns were already minimal; the voice script was written to match. The U-turn cue stays deliberately sharper than the others.</p>
+          <p style="margin-top:14px;font-size:12px;color:#6d6a60">This feedback is qualitative and informal. Names, dates and a count belong in the field record; they are not fabricated here.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TIMELINE ================= -->
+  <section class="section" id="timeline" aria-labelledby="timeline-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>08</b> / Record</p>
+        <div>
+          <h2 class="section-title" id="timeline-title">The short version of a long semester.</h2>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <span class="tl-date">Early Oct 2026</span><span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-body"><b>Display HUD concept</b><p>A helmet with a combiner optic and a projected next-turn arrow. Sketches and an optical path, no physical build.</p><span class="tag tag--dead">Concept only</span></div>
+        </div>
+        <div class="tl-item tl-item--dead">
+          <span class="tl-date">Late Oct 2026</span><span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-body"><b>Optics reality check</b><p>Brightness, eye relief and alignment could not be solved with the available tools. The display also kept the glance problem intact.</p><span class="tag tag--dead">Stopped</span></div>
+        </div>
+        <div class="tl-item tl-item--now">
+          <span class="tl-date">12 Nov 2026</span><span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-body"><b>Pivot to audio</b><p>Reframed the problem around attention. Chose five tone cues and a modular rear electronics bay.</p><span class="tag tag--built">Decision</span></div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-date">Week 12–13</span><span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-body"><b>Bench v0 + digital shell</b><p>ESP32-C3, protected LiPo, boost and piezo working on the bench. Parametric helmet model built for this page.</p><span class="tag tag--built">Built</span></div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-date">Week 14</span><span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-body"><b>Peer demo + field notes</b><p>Five-cue language demonstrated on the bench. Classmates asked for a visual backup; the phone route was added to the concept.</p><span class="tag tag--sim">In progress</span></div>
+        </div>
+        <div class="tl-item">
+          <span class="tl-date">Next</span><span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-body"><b>Integrate the audio path</b><p>Wire MAX9814, DFPlayer and speakers; measure cue level in noise; then decide whether an off-road rider trial is justified.</p><span class="tag tag--none">Not started</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NEXT ================= -->
+  <section class="section" id="next" aria-labelledby="next-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="mono label"><b>09</b> / Next</p>
+        <div>
+          <h2 class="section-title" id="next-title">What has to happen before this is a helmet.</h2>
+          <p class="section-intro">The order matters. Audio integration comes before any rider trial; the trial comes before any safety language.</p>
+        </div>
+      </div>
+      <div class="next-list">
+        <div class="next-item"><span class="n">01</span><div><b>Wire the audio path</b><p>MAX9814 → ESP32 → DFPlayer → speakers. Test one cue at a time before closing the bay.</p></div><span class="tag tag--none">Next</span></div>
+        <div class="next-item"><span class="n">02</span><div><b>Measure the cue in noise</b><p>Sound-level meter at the ear position; confirm the cue is audible without masking speech or horns.</p></div><span class="tag tag--none">Open</span></div>
+        <div class="next-item"><span class="n">03</span><div><b>Off-road rider trial</b><p>Closed course, written protocol, consent and a stop rule. No traffic, no safety claim until this exists.</p></div><span class="tag tag--none">Blocked</span></div>
+        <div class="next-item"><span class="n">04</span><div><b>Complete the field record</b><p>Ten named stakeholders, visit date and signed pages for the field record. Every blank is marked.</p></div><span class="tag tag--sim">Field</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-brand">SOUND<span>NAV</span></p>
+        <p class="foot-note">A smart audio navigation helmet, built as a student design project. Five cues, a bench prototype, and a clear line between what runs and what is still a render.</p>
+      </div>
+      <div class="foot-cols">
+        <div>
+          <h3>Project</h3>
+          <a href="#glance">The glance</a>
+          <a href="#iteration">Iteration</a>
+          <a href="#system">System</a>
+          <a href="#status">Build status</a>
+        </div>
+        <div>
+          <h3>Evidence</h3>
+          <a href="#anatomy">3D anatomy</a>
+          <a href="#cues">Cue language</a>
+          <a href="#field">Field notes</a>
+          <a href="#timeline">Timeline</a>
+        </div>
+        <div>
+          <h3>Colophon</h3>
+          <p>Three.js r169</p>
+          <p>Archivo · IBM Plex Mono</p>
+          <p>No tracking. Audio is synthesized locally.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot-base">
+      <p class="mono-xs">© <span id="year">2026</span> SOUNDNAV · VTU 1BIDTL158 · Student project</p>
+      <p class="mono-xs">Not a safety, medical or roadworthiness claim. No road tests run.</p>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="js/main.js"></script>
+</body>
 </html>
