@@ -210,7 +210,7 @@
           </div>
 
           <div class="iteration-figure" style="background:#0b0f10">
-            <svg viewBox="0 0 640 360" role="img" aria-label="Concept sketch of the audio helmet: route on a phone, a rear control bay, ear pods and a five-cue language">
+            <svg viewBox="0 0 640 360" role="img" aria-label="Concept sketch of the audio helmet: route on a phone, a rear control bay, ear speakers and a five-cue language">
               <g fill="none" stroke="#3c4245" stroke-width="1.5">
                 <path d="M176 86L176 284M176 86L420 86C488 86 520 140 520 200L520 244C520 288 486 310 444 310L176 310"/>
                 <circle cx="348" cy="196" r="66"/>
@@ -306,7 +306,7 @@
         <span class="node-link" aria-hidden="true"><span>→</span></span>
         <button class="node" type="button" data-node="speakers" aria-pressed="false">
           <span class="node-idx">05 / SOUND</span>
-          <span class="node-name">Ear pods</span>
+          <span class="node-name">Ear speakers</span>
           <span class="node-part">2× 3 W speakers</span>
           <span class="node-status is-none">Not integrated</span>
         </button>
@@ -376,14 +376,14 @@
             <li><button class="part-btn" type="button" data-part="shell" aria-pressed="false"><span>01</span><b>Shell + chin bar</b><em>Digital</em></button></li>
             <li><button class="part-btn" type="button" data-part="visor" aria-pressed="false"><span>02</span><b>Visor</b><em>Digital</em></button></li>
             <li><button class="part-btn" type="button" data-part="bay" aria-pressed="true"><span>03</span><b>Rear control bay</b><em>Mixed</em></button></li>
-            <li><button class="part-btn" type="button" data-part="audio" aria-pressed="false"><span>04</span><b>Audio pods</b><em>Parts only</em></button></li>
+            <li><button class="part-btn" type="button" data-part="audio" aria-pressed="false"><span>04</span><b>Ear speakers</b><em>Parts only</em></button></li>
             <li><button class="part-btn" type="button" data-part="mic" aria-pressed="false"><span>05</span><b>Microphone</b><em>Parts only</em></button></li>
             <li><button class="part-btn" type="button" data-part="pads" aria-pressed="false"><span>06</span><b>Liner + pads</b><em>Digital</em></button></li>
           </ul>
 
           <div class="part-detail" aria-live="polite">
             <h3 id="part-title">Rear control bay</h3>
-            <p id="part-copy">The rear pod holds the ESP32-C3, DFPlayer Mini, TP4056 charger, MT3608 boost, MAX9814 and a protected 1S LiPo. The bench build uses the ESP32, charger, boost and piezo only; the rest are placed in the model, not wired.</p>
+            <p id="part-copy">The rear electronics sit on an internal plate in the liner pocket; the bench build uses the ESP32, charger, boost and piezo only; the rest are placed in the model, not wired.</p>
             <div class="part-meta">
               <span class="tag tag--sim" id="part-status">Partly built</span>
               <span class="tag tag--none" id="part-extra">No enclosure print</span>
@@ -520,13 +520,13 @@
             <tr><th scope="col">Subsystem</th><th scope="col">Status</th><th scope="col">What exists</th><th scope="col">What is missing</th></tr>
           </thead>
           <tbody>
-            <tr><td>Helmet form</td><td><span class="tag tag--built">Digital</span></td><td>Parametric Three.js model with shell, visor, pads, rear bay and audio pods.</td><td>No physical print, no fit test, no shell fabrication.</td></tr>
+            <tr><td>Helmet form</td><td><span class="tag tag--built">Digital</span></td><td>Parametric Three.js model with shell, visor, pads, internal rear bay and ear speakers.</td><td>No physical print, no fit test, no shell fabrication.</td></tr>
             <tr><td>ESP32 cue firmware</td><td><span class="tag tag--built">Built</span></td><td>L / R / U / D / C tone patterns on a passive piezo, powered from a protected 1S LiPo.</td><td>Not installed in a helmet; no enclosure.</td></tr>
             <tr><td>Browser → ESP32 link</td><td><span class="tag tag--built">Built</span></td><td>Cue commands from the web app trigger the bench buzzer.</td><td>Bench-only link; transport and range not documented for a ride.</td></tr>
             <tr><td>Map + route</td><td><span class="tag tag--sim">Simulated</span></td><td>A demo route on this page with five timed cues.</td><td>No live GPS, no phone mount, no real trip.</td></tr>
             <tr><td>Spoken guidance</td><td><span class="tag tag--sim">Simulated</span></td><td>Browser speech preview of the intended phrases.</td><td>No DFPlayer wiring, no MP3 set, no in-helmet playback.</td></tr>
             <tr><td>Voice commands</td><td><span class="tag tag--sim">Simulated</span></td><td>Scripted voice-command demo path.</td><td>MAX9814 not connected; no speech recognition on device.</td></tr>
-            <tr><td>Mic + audio output</td><td><span class="tag tag--none">Not integrated</span></td><td>MAX9814, DFPlayer Mini and 3 W speakers are on hand.</td><td>No capture, no amplifier chain, no ear-pod wiring.</td></tr>
+            <tr><td>Mic + audio output</td><td><span class="tag tag--none">Not integrated</span></td><td>MAX9814, DFPlayer Mini and 3 W speakers are on hand.</td><td>No capture, no amplifier chain, no speaker wiring.</td></tr>
             <tr><td>On-road test</td><td><span class="tag tag--none">Not run</span></td><td>—</td><td>No rider trial, no noise measurement, no safety validation.</td></tr>
           </tbody>
         </table>

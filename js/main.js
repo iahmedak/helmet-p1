@@ -114,7 +114,7 @@ const PARTS = {
   bay: {
     title: "Rear control bay",
     copy:
-      "The rear pod holds the ESP32-C3, DFPlayer Mini, TP4056 charger, MT3608 boost, MAX9814 and a protected 1S LiPo. The bench build uses the ESP32, charger, boost and piezo only; the rest are placed in the model, not wired. The cover lifts away in the exploded view.",
+      "An internal plate in the rear liner pocket holds the ESP32-C3, DFPlayer Mini, TP4056 charger, MT3608 boost, MAX9814 and a protected 1S LiPo. The bench build uses the ESP32, charger, boost and piezo only; the rest are placed in the model, not wired. A lid sits flush with the shell and lifts away in the exploded view.",
     status: "Partly built",
     statusClass: "tag--sim",
     extra: "No enclosure print",
@@ -122,9 +122,9 @@ const PARTS = {
     view: "rear",
   },
   audio: {
-    title: "Audio pods",
+    title: "Ear speakers",
     copy:
-      "Two ear pods with 3 W speakers and a hi-vis ring. The speakers are on hand but have not been connected to the DFPlayer or mounted in a helmet. The pods are a concept for the output stage, not a tested acoustic design.",
+      "Two 3 W speakers sit in the cheek pockets, facing the ears with a thin cushion. They are on hand but have not been connected to the DFPlayer or mounted in a helmet. This is a concept for the output stage, not a tested acoustic design.",
     status: "Parts only",
     statusClass: "tag--none",
     extra: "Not wired",
@@ -144,7 +144,7 @@ const PARTS = {
   pads: {
     title: "Liner + pads",
     copy:
-      "Cheek pads, a neck roll and a brow pad complete the interior. They are modelled to show where the electronics and ear pods sit relative to a wearer. Comfort, heat and fit have not been tested.",
+      "An EPS liner, cheek pads, a neck roll and a chin curtain complete the interior. The electronics sit in a recessed pocket behind the liner, and the shell opens from below so a head can enter. Comfort, heat and fit have not been tested.",
     status: "Digital concept",
     statusClass: "tag--sim",
     extra: "No comfort test",
@@ -278,11 +278,11 @@ const SYSTEM = {
   },
   speakers: {
     kicker: "05 / SOUND",
-    title: "Ear pods put the cue near the ear",
+    title: "Ear speakers put the cue near the ear",
     copy:
-      "Two small speakers sit in the ear pods, close to the ear but not sealed like earbuds. The open design is deliberate: the rider must still hear traffic. Whether the cue is intelligible without masking the road is an open question that needs measurement.",
+      "Two small speakers sit in the cheek pockets, close to the ear but not sealed like earbuds. The open design is deliberate: the rider must still hear traffic. Whether the cue is intelligible without masking the road is an open question that needs measurement.",
     status: "Available, not integrated",
-    exists: "Two 3 W speakers and a modelled ear-pod housing.",
+    exists: "Two 3 W speakers and a modelled cheek-pocket mount.",
     missing: "Mounting, amplifier, level calibration and a noise test.",
     node: "speakers",
   },

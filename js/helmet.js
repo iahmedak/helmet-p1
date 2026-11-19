@@ -65,28 +65,6 @@ function labelTexture(lines, opts = {}) {
   return tex;
 }
 
-function grilleTexture() {
-  const c = document.createElement("canvas");
-  c.width = c.height = 128;
-  const ctx = c.getContext("2d");
-  ctx.fillStyle = "#0a0c0e";
-  ctx.fillRect(0, 0, 128, 128);
-  ctx.fillStyle = "#343a40";
-  for (let y = 3; y < 128; y += 5) {
-    for (let x = 3; x < 128; x += 5) {
-      ctx.beginPath();
-      ctx.arc(x, y, 0.9, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(2, 2);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return tex;
-}
-
 function epsTexture() {
   const c = document.createElement("canvas");
   c.width = c.height = 128;
@@ -121,10 +99,25 @@ function shellMask(x, y, z) {
   const av = (v - 0.045) / 0.27;
   if (Math.pow(Math.abs(ah), 4) + Math.pow(Math.abs(av), 4) < 1) return true;
 
-  // bottom opening: deeper at the chin, higher at the back
-  const front = Math.max(0, Math.cos(h));
-  const vCut = -1.18 - 0.1 * front;
-  return v < vCut;
+  // rear access opening for the internal electronics plate
+  const d = Math.PI - Math.abs(h);
+  const a = d / 0.4;
+  const b = (v + 0.1) / 0.22;
+  if (a * a + b * b < 1) return false;
+
+  // head opening: chin bar stays low at the front, sides and back rise to jaw / neck
+  const sideRise = 0.46 * smoothstep(0.35, 1.55, Math.abs(h));
+  return v < -1.28 + sideRise;
+}
+
+function linerMask(x, y, z) {
+  if (!shellMask(x, y, z)) return false;
+  const v = Math.asin(THREE.MathUtils.clamp(y, -1, 1));
+  const h = Math.atan2(x, z);
+  // pocket for the electronics, recessed behind the rear shell
+  const a = (Math.PI - Math.abs(h)) / 0.44;
+  const b = (v + 0.1) / 0.34;
+  return a * a + b * b > 1;
 }
 
 function smoothstep(a, b, x) {
@@ -497,7 +490,7 @@ function buildModel() {
   const shellGroup = new THREE.Group();
   const shellGeo = shellGeometry(RX, RY, RZ);
   const shell = new THREE.Mesh(shellGeo, shellMat);
-  const linerGeo = shellGeometry(RX, RY, RZ, 0.935);
+  const linerGeo = shellGeometry(RX, RY, RZ, 0.935, linerMask);
   const liner = new THREE.Mesh(linerGeo, linerMat);
   const linerGroup = new THREE.Group();
   linerGroup.add(liner);
@@ -537,7 +530,7 @@ function buildModel() {
   const bottomPts = [];
   for (let i = 0; i < 96; i++) {
     const h = (i / 96) * Math.PI * 2;
-    const vCut = -1.16 - 0.1 * Math.max(0, Math.cos(h));
+    const vCut = -1.28 + 0.46 * smoothstep(0.35, 1.55, Math.abs(h));
     bottomPts.push(helmetPoint(RX, RY, RZ, h, vCut, 1.004));
   }
   const bottomCurve = new THREE.CatmullRomCurve3(bottomPts, true, "centripetal");
@@ -566,7 +559,7 @@ function buildModel() {
         const h = h0 + (h1 - h0) * (i / su);
         // top edge tucks under the visor; bottom edge follows the shell opening
         const vTop = -0.34 + 0.05 * Math.min(1, Math.pow(h / 0.7, 2));
-        const vCut = -1.18 - 0.1 * Math.max(0, Math.cos(h));
+        const vCut = -1.28 + 0.46 * smoothstep(0.35, 1.55, Math.abs(h));
         const v = vTop + (vCut - 0.05 - vTop) * f;
         const p = helmetPoint(RX, RY, RZ, h, v, 1.022);
         pos.push(p.x, p.y, p.z);
@@ -788,105 +781,76 @@ function buildModel() {
   parts.set("pads", padGroup);
 
   /* ---- rear electronics bay ---- */
-  // curved oval gasket: closes the seam between the flat pod and the shell
-  const bayPadGeo = (() => {
-    const CH = Math.PI;
-    const CV = -0.1;
-    const RH = 0.45;
-    const RV = 0.3;
-    const su = 56;
-    const sv = 14;
-    const pos = (() => { const p = helmetPoint(RX, RY, RZ, CH, CV, 1.012); return [p.x, p.y, p.z]; })();
-    const idx = [];
-    for (let j = 1; j <= sv; j++) {
-      const r = j / sv;
-      for (let i = 0; i < su; i++) {
-        const a = (i / su) * Math.PI * 2;
-        const p = helmetPoint(RX, RY, RZ, CH + r * RH * Math.cos(a), CV + r * RV * Math.sin(a), 1.012);
-        pos.push(p.x, p.y, p.z);
-      }
-    }
-    for (let i = 0; i < su; i++) idx.push(0, 1 + i, 1 + ((i + 1) % su));
-    for (let j = 1; j < sv; j++) {
-      const ring = 1 + (j - 1) * su;
-      const next = ring + su;
-      for (let i = 0; i < su; i++) {
-        const i2 = (i + 1) % su;
-        idx.push(ring + i, next + i, next + i2, ring + i, next + i2, ring + i2);
-      }
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-    g.setIndex(idx);
-    g.computeVertexNormals();
-    return g;
-  })();
-  root.add(new THREE.Mesh(bayPadGeo, new THREE.MeshStandardMaterial({ color: 0x0f1214, roughness: 0.82, metalness: 0.08, side: THREE.DoubleSide })));
+  // rubber rim around the rear access opening
+  const bayRimPts = [];
+  for (let i = 0; i < 72; i++) {
+    const t = (i / 72) * Math.PI * 2;
+    bayRimPts.push(helmetPoint(RX, RY, RZ, Math.PI + 0.4 * Math.cos(t), -0.1 + 0.22 * Math.sin(t), 1.01));
+  }
+  const bayRim = new THREE.CatmullRomCurve3(bayRimPts, true, "centripetal");
+  root.add(new THREE.Mesh(
+    new THREE.TubeGeometry(bayRim, 96, 0.2, 8, true),
+    new THREE.MeshStandardMaterial({ color: 0x111417, roughness: 0.88 })
+  ));
 
   const bay = new THREE.Group();
   bay.position.set(0, -1.42, -14.85);
 
-  const podMat = new THREE.MeshPhysicalMaterial({ color: 0x202428, roughness: 0.56, metalness: 0.16, clearcoat: 0.14, clearcoatRoughness: 0.62 });
-  // housing body, buried through the shell so the pod meets the curved surface
-  const back = roundedBox(9.9, 6.8, 3.2, 0.6, podMat);
-  back.position.z = -0.5;
-  bay.add(back);
-
-  // deep frame: the pod's side wall, running from the cover back into the shell
+  // shallow wall around the recessed access lid; the boards themselves sit inside the shell
   const frameMat = new THREE.MeshStandardMaterial({ color: 0x121518, roughness: 0.72, metalness: 0.22 });
-  const top = roundedBox(10.2, 0.7, 3.7, 0.25, frameMat);
-  top.position.set(0, 3.35, -1.78);
+  const top = roundedBox(10.2, 0.6, 1.8, 0.22, frameMat);
+  top.position.set(0, 3.35, -1.05);
   const bot = top.clone();
   bot.position.y = -3.35;
-  const left = roundedBox(0.7, 6.0, 3.7, 0.25, frameMat);
-  left.position.set(-4.75, 0, -1.78);
+  const left = roundedBox(0.6, 6.1, 1.8, 0.22, frameMat);
+  left.position.set(-4.75, 0, -1.05);
   const right = left.clone();
   right.position.x = 4.75;
   bay.add(top, bot, left, right);
 
-  // carrier plate, sitting on the housing's rear wall
+  // carrier plate in the liner pocket, with the components on its outward face
   const tray = roundedBox(8.8, 6.2, 0.12, 0.05, new THREE.MeshStandardMaterial({ color: 0x2a3035, roughness: 0.76, metalness: 0.22 }));
-  tray.position.z = -2.2;
+  tray.position.z = -0.3;
   bay.add(tray);
 
   const battery = makeBattery();
   battery.scale.setScalar(0.82);
-  battery.position.set(-2.35, -1.8, -2.55);
+  battery.position.set(-2.35, -1.8, -0.38);
   bay.add(battery);
 
   const esp = makeESP32();
   esp.scale.setScalar(0.78);
-  esp.position.set(-3.4, 1.45, -2.6);
+  esp.position.set(-3.4, 1.45, -0.42);
   bay.add(esp);
 
   const df = makeDFPlayer();
   df.scale.setScalar(0.8);
-  df.position.set(-0.55, 1.75, -2.6);
+  df.position.set(-0.55, 1.75, -0.42);
   bay.add(df);
 
   const max = makeMAX9814();
   max.scale.setScalar(0.9);
-  max.position.set(2.55, 2.1, -2.6);
+  max.position.set(2.55, 2.1, -0.42);
   bay.add(max);
 
   const tp = makeTP4056();
   tp.scale.setScalar(0.78);
-  tp.position.set(1.55, 0.0, -2.6);
+  tp.position.set(1.55, 0.0, -0.42);
   bay.add(tp);
 
   const mt = makeMT3608();
   mt.scale.setScalar(0.8);
-  mt.position.set(3.45, -0.15, -2.6);
+  mt.position.set(3.45, -0.15, -0.42);
   bay.add(mt);
 
   // pod wiring
   const wireMat = (color) => new THREE.MeshStandardMaterial({ color, roughness: 0.55 });
   const wires = [
-    { c: 0x9d2c27, pts: [[-3.3, -0.75, -2.6], [-2.9, -1.5, -2.55], [-2.1, -1.75, -2.5]] },
-    { c: 0x0b0c0d, pts: [[-3.6, -0.75, -2.6], [-3.2, -1.7, -2.55], [-2.45, -1.8, -2.5]] },
-    { c: 0xc9a25a, pts: [[-2.55, 0.9, -2.6], [-1.6, 0.5, -2.55], [-0.5, 0.85, -2.5]] },
-    { c: 0x6b7177, pts: [[0.1, 1.4, -2.6], [1.0, 0.9, -2.55], [1.55, 0.6, -2.5]] },
-    { c: 0x6c4f86, pts: [[3.5, 1.6, -2.6], [3.8, 0.9, -2.55], [3.95, 0.4, -2.5]] },
+    { c: 0x9d2c27, pts: [[-3.3, -0.75, -0.42], [-2.9, -1.5, -0.38], [-2.1, -1.75, -0.34]] },
+    { c: 0x0b0c0d, pts: [[-3.6, -0.75, -0.42], [-3.2, -1.7, -0.38], [-2.45, -1.8, -0.34]] },
+    { c: 0xc9a25a, pts: [[-2.55, 0.9, -0.42], [-1.6, 0.5, -0.38], [-0.5, 0.85, -0.34]] },
+    { c: 0x6b7177, pts: [[0.1, 1.4, -0.42], [1.0, 0.9, -0.38], [1.55, 0.6, -0.34]] },
+    { c: 0x6c4f86, pts: [[3.5, 1.6, -0.42], [3.8, 0.9, -0.38], [3.95, 0.4, -0.34]] },
   ];
   for (const w of wires) {
     const curve = new THREE.CatmullRomCurve3(w.pts.map((p) => new THREE.Vector3(...p)));
@@ -894,17 +858,17 @@ function buildModel() {
     bay.add(tube);
   }
 
-  // cover panel, recessed behind the frame
+  // flush access lid on the shell, hiding the internal plate until it is removed
   const coverGroup = new THREE.Group();
-  const cover = roundedBox(9.3, 6.9, 0.5, 0.2, new THREE.MeshPhysicalMaterial({ color: 0x15181c, roughness: 0.34, metalness: 0.4, clearcoat: 0.45, clearcoatRoughness: 0.4 }));
-  cover.position.z = -3.25;
+  const cover = roundedBox(9.3, 6.9, 0.4, 0.2, new THREE.MeshPhysicalMaterial({ color: 0x15181c, roughness: 0.34, metalness: 0.4, clearcoat: 0.45, clearcoatRoughness: 0.4 }));
+  cover.position.z = -1.75;
   coverGroup.add(cover);
 
   const label = new THREE.Mesh(
     new THREE.PlaneGeometry(5.2, 1.55),
     new THREE.MeshBasicMaterial({ map: labelTexture(["SOUNDNAV", "AUDIO CONTROL UNIT"], {}), transparent: false })
   );
-  label.position.set(0, -1.95, -3.55);
+  label.position.set(0, -1.95, -2.02);
   label.rotation.y = Math.PI;
   coverGroup.add(label);
 
@@ -912,14 +876,14 @@ function buildModel() {
     for (const sy of [-1, 1]) {
       const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.1, 12), MAT.metal);
       screw.rotation.x = Math.PI / 2;
-      screw.position.set(sx * 3.95, sy * 2.75, -3.55);
+      screw.position.set(sx * 3.95, sy * 2.75, -2.02);
       coverGroup.add(screw);
     }
   }
 
-  // charge port on the lower edge of the pod
+  // charge port on the lower edge of the lid
   const port = usbC(0.85, 0.3);
-  port.position.set(2.9, -3.5, -2.35);
+  port.position.set(2.9, -3.5, -1.4);
   port.rotation.x = Math.PI / 2;
   bay.add(port);
 
@@ -928,38 +892,24 @@ function buildModel() {
   parts.set("bay", bay);
   coverGroup.userData.explode = new THREE.Vector3(-1.2, -10.5, -1.2);
 
-  /* ---- audio: flush exterior grilles + interior speakers ---- */
+  /* ---- audio: speakers inside the cheek pockets ---- */
   const audio = new THREE.Group();
-  const podMatte = new THREE.MeshPhysicalMaterial({ color: 0x15181b, roughness: 0.52, metalness: 0.18, clearcoat: 0.16, clearcoatRoughness: 0.55 });
-  const grilleMat = new THREE.MeshStandardMaterial({ map: grilleTexture(), color: 0xffffff, roughness: 0.7, metalness: 0.15 });
+  const padMat = new THREE.MeshStandardMaterial({ color: 0x16181b, roughness: 0.94 });
   for (const side of [-1, 1]) {
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(2.85, 2.85, 1.0, 40), podMatte);
-    base.rotation.z = Math.PI / 2;
-    base.position.set(side * 11.85, -3.4, -0.8);
-    audio.add(base);
-
-    const face = new THREE.Mesh(new THREE.CircleGeometry(2.56, 40), grilleMat);
-    face.rotation.y = side * Math.PI / 2;
-    face.position.set(side * 12.36, -3.4, -0.8);
-    audio.add(face);
-
-    const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(2.58, 0.055, 8, 48),
-      new THREE.MeshStandardMaterial({ color: 0x4b5258, roughness: 0.38, metalness: 0.7 })
-    );
-    ring.rotation.y = Math.PI / 2;
-    ring.position.set(side * 12.37, -3.4, -0.8);
-    audio.add(ring);
-
     const cup = makeSpeaker();
     cup.position.set(side * 9.6, -3.4, -0.8);
     cup.rotation.y = side === 1 ? 0 : Math.PI;
     audio.add(cup);
+
+    const cushion = new THREE.Mesh(new THREE.TorusGeometry(2.1, 0.42, 8, 32), padMat);
+    cushion.position.set(side * 9.15, -3.4, -0.8);
+    cushion.rotation.y = Math.PI / 2;
+    audio.add(cushion);
   }
 
   const speakerWire = (side, color) => {
     const pts = [
-      new THREE.Vector3(side * 1.0, -3.5, -14.4),
+      new THREE.Vector3(side * 1.0, -3.5, -15.3),
       new THREE.Vector3(side * 4.2, -9.2, -8.6),
       new THREE.Vector3(side * 7.6, -9.0, -4.2),
       new THREE.Vector3(side * 8.9, -6.4, -1.8),
