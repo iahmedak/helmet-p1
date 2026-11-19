@@ -676,7 +676,7 @@ section[id] { scroll-margin-top: 80px; }
 
 .plate-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: clamp(18px, 2.4vw, 32px);
   align-items: start;
 }
@@ -688,7 +688,7 @@ section[id] { scroll-margin-top: 80px; }
   flex-direction: column;
   min-width: 0;
 }
-.plate-grid > .plate:only-child { max-width: 760px; }
+.plate-grid > .plate:only-child { max-width: 900px; }
 .plate-frame { padding: clamp(12px, 1.6vw, 20px); background: #f5f2ea; }
 .plate-frame img { display: block; width: 100%; height: auto; }
 .plate figcaption {
