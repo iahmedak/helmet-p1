@@ -17,6 +17,10 @@ Open `http://127.0.0.1:4322/`.
 
 The page also works from any static host. Opening `index.html` directly from disk will block the ES modules in most browsers.
 
+## Deploy
+
+Import the repository at [vercel.com/new](https://vercel.com/new) and deploy. `vercel.json` already sets the framework preset to Other, skips the install and build steps, and serves the repository root, so no settings need changing in the dashboard.
+
 ## Files
 
 ```
